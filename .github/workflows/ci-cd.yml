@@ -1,64 +1,41 @@
-name: docs-ci-cd
+name: ci-cd
 
 on:
   push:
     branches: [ main ]
-    paths:
-      - "Dockerfile"
-      - "docker-compose.yaml"
-      - "package*.json"
-      - "src/**"
-      - "docs/**"
-      - "static/**"
-      - "docusaurus.config.*"
   workflow_dispatch:
 
 concurrency:
   group: docs-deploy
   cancel-in-progress: true
 
-permissions:
-  contents: read
-
 jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Use Node 20
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-
-      - name: Install deps
-        run: npm ci
-
-      - name: Build site
-        run: npm run build
-
-      - name: Validate Docker build
-        run: docker build --target serve --build-arg SITE_URL=${{ secrets.SITE_URL }} .
+      - run: npm ci
+      - run: npm run build
+      - name: Docker build
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+        run: docker build --target serve --build-arg SITE_URL="$SITE_URL" .
 
   deploy:
     needs: ci
     runs-on: ubuntu-latest
+    env:
+      BRANCH: main
+      REPO_URL: https://github.com/AnubhavPradhan/mokshya-cicd.git
+      DEPLOY_DIR: ~/Deploy/docs-mokshya-ai
     steps:
       - uses: actions/checkout@v4
 
-      - name: Upload repo to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT || 22 }}
-          source: "."
-          target: "~/Deploy/docs-mokshya-ai"
-          rm: true
-
-      - name: Build and run on server
+      - name: Deploy over SSH
         uses: appleboy/ssh-action@v1.0.3
         env:
           SITE_URL: ${{ secrets.SITE_URL }}
@@ -68,10 +45,17 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
-            set -e
-            cd ~/Deploy/docs-mokshya-ai
-            docker compose down || true
-            docker compose pull || true
-            docker compose build
-            SITE_URL="$SITE_URL" docker compose up -d --remove-orphans
+            set -euo pipefail
+            if [ ! -d "$DEPLOY_DIR/.git" ]; then
+              mkdir -p "$DEPLOY_DIR"
+              git clone "$REPO_URL" "$DEPLOY_DIR"
+            fi
+            cd "$DEPLOY_DIR"
+            git fetch origin
+            git reset --hard origin/$BRANCH
+            # either pass env inline (preferred) …
+            SITE_URL="$SITE_URL" docker compose up -d --build --remove-orphans
+            # …or write .env instead:
+            # printf "SITE_URL=%s\n" "$SITE_URL" > .env && docker compose up -d --build
             docker image prune -f
+
