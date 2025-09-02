@@ -1,0 +1,72 @@
+# Reconnaissance Automation using Mokshya.ai
+
+---
+
+## Target Scope
+**Target**: `thuisbezorgd.nl` (Bug bounty program from Bugcrowd)  
+
+**Objective**:  
+- Subdomain enumeration  
+- Technology fingerprinting  
+- Passive vulnerability detection  
+- Deep reconnaissance of the primary domain  
+- Output analysis and structured reporting  
+
+This aligns with the **initial phases of red teaming**, bug bounty scoping, and pre-engagement mapping for vulnerability research.  
+
+---
+
+## Recon Workflow
+
+| Task                     | Tool/Mode                                         | Output Summary                                         |
+|---------------------------|--------------------------------------------------|--------------------------------------------------------|
+| **Subdomain Enumeration** | `subdomain_enum`                                  | >200 subdomains, including test, dev, staging, etc.    |
+| **Technology Fingerprinting** | `check_technologies`                          | No tech leaked on home domain (Cloudflare obfuscation) |
+| **Passive Vulnerability Check** | `check_vulnerabilities`                     | No known CVEs found in public scan                     |
+| **Deep Recon (main domain)** | `check_dns_records`, `nmap_scan`, `detect_waf` | DNS config, security headers, WAF presence, port scan  |
+| **Web App Analysis**      | `analyze_http_headers`, `fetch_robots_txt`, `security_headers_scan` | Missing headers (CSP, X-XSS-Protection) |
+| **Historical Intel**      | `wayback_urls`                                   | No retrievable wayback content due to robots.txt       |
+| **Issue Report Generation** | Output Parsing                                 | Tabulated and executive/technical summaries            |
+
+---
+
+## Issue Reporting Matrix
+
+| Category                  | Reportable | Risk Level | Notes                                    |
+|---------------------------|------------|------------|------------------------------------------|
+| Security Headers (CSP missing) |  Yes |  Medium | Recommend setting strict CSP              |
+| WAF Detected (Cloudflare) |  Info Only |  Low    | Expected; confirms edge protection        |
+| Technology Fingerprint Missing |  No  |  Low    | Good hygiene; no leakage                  |
+| Open Ports via Nmap       |  Info Only |  Low    | Cloudflare proxy only                     |
+| Robots.txt Inaccessible   |  Info Only |  Low    | Common to block bot recon                 |
+| Numerous Exposed Subdomains |  Yes   |  Medium–High | Manual inspection suggested for test/dev endpoints |
+
+---
+
+## Technical Highlights
+
+### A. Subdomain Footprint
+Mokshya.ai identified **200+ active subdomains**, including:  
+- Feature subdomains: `shop.`, `mail.`, `api.`, `events.`  
+- Dev/staging environments: `test.`, `beta.`, `staging.`, `acc-shop.`, `dev.`  
+- Restaurant-level subdomains: `dominos-pizza-tilburg-1.`, `bierkoerier-albrandswaard.`  
+
+### B. Security Headers Gaps
+Missing headers such as **Content-Security-Policy (CSP)** and **X-XSS-Protection**:  
+- Expose frontend to potential **XSS vectors** if input mismanagement exists  
+- Commonly flagged in **penetration testing** and **bug bounty** assessments  
+
+### C. WAF + Obfuscation
+Use of **Cloudflare**:  
+- Masks server headers and tech stack  
+- Intercepts scans and spiders (`403` for `robots.txt`, redirects from `/`)  
+- TLS certificate covers ~20 **JustEat Group domains**, improving resilience  
+
+---
+
+## Reporting Recommendations
+
+### Should Be Reported
+- Missing **CSP header**  
+  ```http
+  Content-Security-Policy: default-src 'self';

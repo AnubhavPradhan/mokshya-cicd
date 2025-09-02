@@ -1,0 +1,128 @@
+/* Footer styling for Mokshya AI */
+.footer {
+  background: #161716 !important;
+  color: #e7e7ec !important;
+  border-top: 1px solid #39376f;
+}
+.footer__links {
+  color: #e7e7ec !important;
+}
+.footer__link-item {
+  color: #9f6dfc !important;
+  transition: color 0.2s;
+}
+.footer__link-item:hover {
+  color: #b28aff !important;
+}
+.footer__title {
+  color: #b5b6c0 !important;
+}
+.footer__copyright {
+  color: #747378 !important;
+}
+
+/* Light mode overrides for footer */
+[data-theme='light'] .footer {
+  background: #fff !important;
+  color: #222 !important;
+  border-top: 1px solid #e2d4ff;
+}
+[data-theme='light'] .footer__links {
+  color: #222 !important;
+}
+[data-theme='light'] .footer__link-item {
+  color: #9f6dfc !important;
+}
+[data-theme='light'] .footer__link-item:hover {
+  color: #6c3ab5 !important;
+}
+[data-theme='light'] .footer__title {
+  color: #4b287f !important;
+}
+[data-theme='light'] .footer__copyright {
+  color: #39376f !important;
+}
+/* Custom footer styling for Mokshya AI */
+.footer {
+  background: #161716 !important;
+  color: #e7e7ec !important;
+  border-top: 1px solid #39376f;
+}
+.footer__links {
+  color: #e7e7ec !important;
+}
+.footer__link-item {
+  color: #9f6dfc !important;
+  transition: color 0.2s;
+}
+.footer__link-item:hover {
+  color: #b28aff !important;
+}
+.footer__title {
+  color: #b5b6c0 !important;
+}
+.footer__copyright {
+  color: #747378 !important;
+}
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+/* DARK MODE DEFAULTS */
+:root {
+  --ifm-color-primary: #9f6dfc;
+  --ifm-color-primary-dark: #8750db;
+  --ifm-color-primary-darker: #6c3ab5;
+  --ifm-color-primary-darkest: #4b287f;
+  --ifm-color-primary-light: #b28aff;
+  --ifm-color-primary-lighter: #c8aaff;
+  --ifm-color-primary-lightest: #e2d4ff;
+  --docusaurus-highlighted-code-line-bg: rgba(159, 109, 252, 0.15);
+  --ifm-color-content: #e7e7ec;
+  --ifm-color-content-secondary: #b5b6c0;
+  --ifm-background-color: #0b0b0f;
+  --ifm-background-surface-color: #100f15;
+  --ifm-navbar-background-color: #161716;
+  --ifm-code-font-size: 95%;
+}
+
+/* LIGHT MODE OVERRIDES */
+[data-theme='light'] {
+  --ifm-background-color: #ffffff;
+  --ifm-background-surface-color: #ffffff;
+  --ifm-navbar-background-color: #ffffff;
+  --ifm-color-content: #000;
+  --ifm-color-content-secondary: #222;
+  --ifm-color-primary: #9f6dfc;
+  --ifm-color-primary-dark: #8750db;
+  --ifm-color-primary-darker: #6c3ab5;
+  --ifm-color-primary-darkest: #4b287f;
+  --ifm-color-primary-light: #b28aff;
+  --ifm-color-primary-lighter: #c8aaff;
+  --ifm-color-primary-lightest: #e2d4ff;
+}
+
+
+/* Sidebar text: active link purple, others black in light mode */
+[data-theme='light'] .theme-doc-sidebar-menu .menu__link {
+  color: #000 !important;
+}
+[data-theme='light'] .theme-doc-sidebar-menu .menu__link.menu__link--active {
+  color: #9f6dfc !important;
+}
+
+
+/* Global selection styling */
+::selection {
+  background: #9f6dfc;
+  color: #fff;
+}
+
+/* Article text black/white in light mode */
+[data-theme='light'] .theme-doc-markdown {
+  color: #000 !important;
+  background: #ffffff !important;
+}

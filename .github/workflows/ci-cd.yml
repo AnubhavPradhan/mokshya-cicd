@@ -1,0 +1,78 @@
+name: docs-ci-cd
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "Dockerfile"
+      - "docker-compose.yaml"
+      - "package*.json"
+      - "src/**"
+      - "docs/**"
+      - "static/**"
+      - "docusaurus.config.*"
+  workflow_dispatch:
+
+concurrency:
+  group: docs-deploy
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Validate Docker build
+        run: docker build --target serve --build-arg SITE_URL=${{ secrets.SITE_URL }} .
+
+  deploy:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Upload repo to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          source: "."
+          target: "~/Deploy/docs-mokshya-ai"
+          rm: true
+          exclude: ".git,**/.git*,node_modules"
+
+      - name: Build and run on server
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            set -e
+            cd ~/Deploy/docs-mokshya-ai
+            docker compose down || true
+            docker compose pull || true
+            docker compose build
+            SITE_URL="$SITE_URL" docker compose up -d --remove-orphans
+            docker image prune -f

@@ -1,0 +1,48 @@
+Mokshya AI follows a **modular architecture** designed for scalability, security, and ease of use. Every layer works together to provide an end-to-end AI-powered security experience.  
+
+### 1. User Layer
+- **Browser Access**: Users interact with Mokshya AI directly from their browser, eliminating complex installation.  
+- **Authentication**: Secure login via Google OAuth ensures sessions are encrypted and account data is protected.  
+
+### 2. Frontend (NuxtJS)
+- Provides the main user interface including login, dashboard, chat, and mode selection.  
+- Offers real-time interactions such as entering scan requests, selecting compliance policies, and reviewing reports.  
+- Designed for **cross-device use**, meaning users can access their data from any environment.  
+
+### 3. Backend (API Server)
+- Acts as the central hub for authentication, orchestration, and usage tracking.  
+- Manages rate limits, user quotas, and subscription enforcement.  
+- Ensures requests are validated and securely passed on to the AI Manager.  
+
+### 4. AI Manager
+- Routes incoming requests to the most suitable AI agent.  
+- Manages task execution flow and tracks dependencies (e.g., recon before vulnerability testing).  
+- Optimizes performance by batching or prioritizing tasks.  
+
+### 5. AI Agents
+Specialized modules designed for distinct security functions:  
+- **Pentest Agent**: Runs automated penetration testing and recon.  
+- **Code Analysis Agent**: Reviews repositories and detects vulnerabilities.  
+- **Research/Q&A Agent**: Provides cybersecurity knowledge and remediation suggestions.  
+
+Agents interact with both **LLMs** and **external security tools**.  
+
+### 6. Intelligence Layer
+- **LLM Engine**: OpenAI-based foundation that processes natural language queries and agent outputs.  
+- Provides reasoning, report formatting, and compliance alignment for generated outputs.  
+
+### 7. Data & Storage
+- **MongoDB** stores:  
+  - Conversations (chat history, prompts, responses)  
+  - Reports (pentest results, code scan results)  
+  - User metadata (plan usage, preferences)  
+- Data is stored securely with **access control** and **encrypted transport**.  
+
+### 8. Output & Integrations
+- **Export Service**: Converts results into auditor-ready formats.  
+- **Enterprise Integrations**: Webhooks and APIs connect to:  
+  - CI/CD Pipelines for continuous checks  
+  - Ticketing systems for issue tracking  
+  - SIEM tools for centralized monitoring and alerts  
+
+![Mokshya AI Architecture Flowchart](/img/mokshya-ai-architecture-flowchart.svg)  
