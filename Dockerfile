@@ -7,7 +7,7 @@ FROM base AS prod
 COPY package*.json ./
 RUN npm ci
 COPY . .
-ARG SITE_URL
+ARG SITE_URL 
 ENV SITE_URL=${SITE_URL}
 RUN npm run build
 
