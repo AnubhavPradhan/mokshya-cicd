@@ -32,3 +32,5 @@ jobs:
             # pass secret at runtime; no .env written
             SITE_URL="$SITE_URL" docker compose up -d --build --remove-orphans
             docker image prune -f
+
+            
